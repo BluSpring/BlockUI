@@ -1,13 +1,15 @@
 package com.ldtteam.blockui;
 
 import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.mod.BlockUI;
 import com.ldtteam.blockui.mod.Log;
 import com.ldtteam.blockui.views.*;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -23,7 +25,7 @@ import java.util.function.Function;
 /**
  * Utilities to load xml files.
  */
-public final class Loader extends SimplePreparableReloadListener<Map<ResourceLocation, PaneParams>>
+public final class Loader extends SimplePreparableReloadListener<Map<ResourceLocation, PaneParams>> implements IdentifiableResourceReloadListener
 {
     public static final Loader INSTANCE = new Loader();
 
@@ -60,7 +62,7 @@ public final class Loader extends SimplePreparableReloadListener<Map<ResourceLoc
     {
         if (paneParams.hasAttribute(ItemIconWithBlockState.PARAM_NBT))
         {
-            if (!FMLEnvironment.production && paneParams.hasAttribute(ItemIconWithProperties.PARAM_PROPERTIES))
+            if (FabricLoader.getInstance().isDevelopmentEnvironment() && paneParams.hasAttribute(ItemIconWithProperties.PARAM_PROPERTIES))
             {
                 throw new IllegalStateException("Must be one of '%s' or '%s'".formatted(ItemIconWithBlockState.PARAM_NBT, ItemIconWithProperties.PARAM_PROPERTIES));
             }
@@ -252,5 +254,10 @@ public final class Loader extends SimplePreparableReloadListener<Map<ResourceLoc
     protected void apply(final Map<ResourceLocation, PaneParams> foundXmls, final ResourceManager rm, final ProfilerFiller profiler)
     {
         xmlCache = foundXmls;
+    }
+
+    @Override
+    public ResourceLocation getFabricId() {
+        return new ResourceLocation(BlockUI.MOD_ID, "loader");
     }
 }

@@ -22,8 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
@@ -44,7 +42,8 @@ public class BOGuiGraphics extends GuiGraphics
     {
         if (itemStack != null)
         {
-            final Font font = IClientItemExtensions.of(itemStack).getFont(itemStack, IClientItemExtensions.FontContext.ITEM_COUNT);
+            //final Font font = IClientItemExtensions.of(itemStack).getFont(itemStack, IClientItemExtensions.FontContext.ITEM_COUNT);
+            Font font = Minecraft.getInstance().font;
             if (font != null)
             {
                 return font;
@@ -70,7 +69,7 @@ public class BOGuiGraphics extends GuiGraphics
 
     public int drawString(final String text, final float x, final float y, final int color, final boolean shadow)
     {
-        return super.drawString(minecraft.font, text, x, y, color, shadow);
+        return super.drawString(minecraft.font, text, (int) x, (int) y, color, shadow);
     }
 
     public void setCursor(final Cursor cursor)
@@ -116,7 +115,8 @@ public class BOGuiGraphics extends GuiGraphics
         pose().translate(8, 8, 150);
         pose().mulPoseMatrix(new Matrix4f().scaling(1.0F, -1.0F, 1.0F));
         pose().scale(16.0F, 16.0F, 16.0F);
-        ForgeHooksClient.handleCameraTransforms(pose(), itemModel, ItemDisplayContext.GUI, false);
+        //ForgeHooksClient.handleCameraTransforms(pose(), itemModel, ItemDisplayContext.GUI, false);
+        itemModel.getTransforms().getTransform(ItemDisplayContext.GUI).apply(false, pose());
 
         if (data.modelNeedsRotationFix())
         {
@@ -143,7 +143,7 @@ public class BOGuiGraphics extends GuiGraphics
         final PoseStack poseStack = new PoseStack();
         final int light = LightTexture.pack(10, 10);
         minecraft.getBlockRenderer()
-            .renderSingleBlock(data.blockState(), poseStack, bufferSource(), light, OverlayTexture.NO_OVERLAY, data.modelData(), null);
+            .renderSingleBlock(data.blockState(), poseStack, bufferSource(), light, OverlayTexture.NO_OVERLAY/*, data.modelData(), null*/);
         if (data.blockEntity() != null)
         {
             try

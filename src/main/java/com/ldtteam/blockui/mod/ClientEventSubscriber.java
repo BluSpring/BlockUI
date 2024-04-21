@@ -4,25 +4,21 @@ import com.ldtteam.blockui.BOScreen;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonVanilla;
 import com.ldtteam.blockui.controls.Image;
+import com.ldtteam.blockui.fabric.Phase;
 import com.ldtteam.blockui.hooks.HookManager;
 import com.ldtteam.blockui.hooks.HookRegistries;
 import com.ldtteam.blockui.mod.container.ContainerHook;
 import com.ldtteam.blockui.util.resloc.OutOfJarResourceLocation;
 import com.ldtteam.blockui.views.BOWindow;
 import com.mojang.blaze3d.platform.InputConstants;
+import io.github.fabricators_of_create.porting_lib.event.client.MouseInputEvents;
+import io.github.fabricators_of_create.porting_lib.event.client.OverlayRenderCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.TagsUpdatedCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.InputEvent.MouseScrollingEvent;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.event.ModMismatchEvent;
-import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
@@ -33,7 +29,6 @@ public class ClientEventSubscriber
     /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
      *
-     * @param event the catched event.
      */
     /* TODO: fixme
     public static void renderWorldLastEvent(@NotNull final RenderLevelLastEvent event)
@@ -47,16 +42,37 @@ public class ClientEventSubscriber
         ps.popPose();
     }*/
 
+    public static void init() {
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
+            onClientTickEvent(Phase.START);
+        });
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            onClientTickEvent(Phase.END);
+        });
+
+        MouseInputEvents.BEFORE_SCROLL.register((deltaX, deltaY) -> {
+            return HookManager.onScroll(deltaY);
+        });
+
+        TagsUpdatedCallback.EVENT.register(registryAccess -> {
+            onTagsUpdated();
+        });
+
+        OverlayRenderCallback.EVENT.register((guiGraphics, partialTicks, window, type) -> {
+            return renderOverlay(type);
+        });
+    }
+
     /**
      * Used to catch the clientTickEvent.
      * Call renderer cache cleaning every 5 secs (100 ticks).
      *
-     * @param event the catched event.
+     * @param phase the current phase
      */
-    @SubscribeEvent
-    public static void onClientTickEvent(final ClientTickEvent event)
+    public static void onClientTickEvent(final Phase phase)
     {
-        if (event.phase == Phase.START && Screen.hasAltDown() && Screen.hasControlDown() && Screen.hasShiftDown())
+        if (phase == Phase.START && Screen.hasAltDown() && Screen.hasControlDown() && Screen.hasShiftDown())
         {
             if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_X))
             {
@@ -72,7 +88,7 @@ public class ClientEventSubscriber
             }
         }
 
-        if (event.phase == Phase.END && Minecraft.getInstance().level != null)
+        if (phase == Phase.END && Minecraft.getInstance().level != null)
         {
             Minecraft.getInstance().getProfiler().push("hook_manager_tick");
             HookRegistries.tick(Minecraft.getInstance().level.getGameTime());
@@ -111,35 +127,35 @@ public class ClientEventSubscriber
      *
      * @param event the catched event.
      */
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    /*@SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onMouseScrollEvent(final MouseScrollingEvent event)
     {
         // cancel in-game scrolling when raytraced gui has scrolling list
         event.setCanceled(HookManager.onScroll(event.getScrollDelta()));
-    }
+    }*/
 
     /**
      * Hook test container gui.
      */
-    @SubscribeEvent
-    public static void onTagsUpdated(final TagsUpdatedEvent event)
+    public static void onTagsUpdated()
     {
         ContainerHook.init();
     }
 
-    @SubscribeEvent
-    public static void renderOverlay(final RenderGuiOverlayEvent event)
+    public static boolean renderOverlay(OverlayRenderCallback.Types overlay)
     {
-        if (Minecraft.getInstance().screen instanceof BOScreen && event.getOverlay() == VanillaGuiOverlay.CROSSHAIR.type())
+        if (Minecraft.getInstance().screen instanceof BOScreen && overlay == OverlayRenderCallback.Types.CROSSHAIRS)
         {
-            event.setCanceled(true);
+            return true;
         }
+
+        return false;
     }
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void onModMismatch(final ModMismatchEvent event)
     {
         // there are no world data and rest is mod compat anyway
         event.markResolved(BlockUI.MOD_ID);
-    }
+    }*/
 }

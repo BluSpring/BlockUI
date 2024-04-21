@@ -1,17 +1,13 @@
 package com.ldtteam.blockui.views;
 
-import com.ldtteam.blockui.BOGuiGraphics;
-import com.ldtteam.blockui.BOScreen;
-import com.ldtteam.blockui.Loader;
-import com.ldtteam.blockui.PaneParams;
-import com.ldtteam.blockui.Parsers;
+import com.ldtteam.blockui.*;
 import com.mojang.blaze3d.platform.Window;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.ToDoubleBiFunction;
@@ -19,7 +15,7 @@ import java.util.function.ToDoubleBiFunction;
 /**
  * Blockout window, high level root pane.
  */
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class BOWindow extends View
 {
     /**
@@ -158,7 +154,9 @@ public class BOWindow extends View
      */
     public void open()
     {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> mc.submit(() -> mc.setScreen(screen)));
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            mc.submit(() -> mc.setScreen(screen));
+        }
     }
 
     /**
@@ -166,7 +164,13 @@ public class BOWindow extends View
      */
     public void openAsLayer()
     {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> mc.submit(() -> mc.pushGuiLayer(screen)));
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            mc.submit(() -> {
+                screen.setParent(mc.screen);
+                mc.setScreen(screen);
+            });
+        }
+        //DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> mc.submit(() -> mc.pushGuiLayer(screen)));
     }
 
     /**
@@ -244,7 +248,11 @@ public class BOWindow extends View
      */
     public void close()
     {
-        Minecraft.getInstance().popGuiLayer();
+        if (Minecraft.getInstance().screen != null)
+            Minecraft.getInstance().screen.onClose();
+        else
+            Minecraft.getInstance().setScreen(null);
+        //Minecraft.getInstance().popGuiLayer();
     }
 
     /**

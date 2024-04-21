@@ -1,6 +1,7 @@
 package com.ldtteam.blockui.mod.item;
 
-import com.ldtteam.blockui.mod.Log;
+import com.ldtteam.blockui.fabric.ModelManagerExtension;
+import io.github.fabricators_of_create.porting_lib.common.util.Lazy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BlockElement;
@@ -17,9 +18,8 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.util.Lazy;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.function.Function;
 
 /**
@@ -27,7 +27,7 @@ import java.util.function.Function;
  */
 public record BlockStateRenderingData(BlockState blockState,
     @Nullable BlockEntity blockEntity,
-    ModelData modelData,
+    //ModelData modelData,
     boolean modelNeedsRotationFix,
     Lazy<ItemStack> playerPickedItemStack)
 {
@@ -35,19 +35,19 @@ public record BlockStateRenderingData(BlockState blockState,
 
     private BlockStateRenderingData(final BlockState blockState,
         final BlockEntity blockEntity,
-        final ModelData modelData,
+        //final ModelData modelData,
         final boolean modelNeedsRotationFix)
     {
         this(blockState,
             blockEntity,
-            modelData,
+            //modelData,
             checkModelForYrotation(blockState),
             Lazy.of(() -> BlockToItemHelper.getItemStack(blockState, blockEntity, Minecraft.getInstance().player)));
     }
 
-    public BlockStateRenderingData(final BlockState blockState, final BlockEntity blockEntity, final ModelData modelData)
+    public BlockStateRenderingData(final BlockState blockState, final BlockEntity blockEntity/*, final ModelData modelData*/)
     {
-        this(blockState, blockEntity, modelData, checkModelForYrotation(blockState));
+        this(blockState, blockEntity, /*modelData,*/ checkModelForYrotation(blockState));
     }
 
     /**
@@ -55,7 +55,7 @@ public record BlockStateRenderingData(BlockState blockState,
      */
     public static BlockStateRenderingData of(final BlockState blockState, @Nullable final BlockEntity blockEntity)
     {
-        return blockEntity == null ? of(blockState) : new BlockStateRenderingData(blockState, blockEntity, getModelData(blockState, blockEntity));
+        return blockEntity == null ? of(blockState) : new BlockStateRenderingData(blockState, blockEntity/*, getModelData(blockState, blockEntity)*/);
     }
 
     /**
@@ -71,7 +71,7 @@ public record BlockStateRenderingData(BlockState blockState,
                 return of(blockState, be);
             }
         }
-        return new BlockStateRenderingData(blockState, null, null);
+        return new BlockStateRenderingData(blockState, null/*, null*/);
     }
 
     /**
@@ -80,10 +80,10 @@ public record BlockStateRenderingData(BlockState blockState,
     public BlockStateRenderingData updateBlockEntity(final Function<BlockEntity, BlockEntity> updater)
     {
         final BlockEntity updated = updater.apply(blockEntity);
-        return new BlockStateRenderingData(blockState, updated, getModelData(blockState, updated), modelNeedsRotationFix);
+        return new BlockStateRenderingData(blockState, updated/*, getModelData(blockState, updated), modelNeedsRotationFix*/);
     }
 
-    public ModelData modelData()
+    /*public ModelData modelData()
     {
         return modelData == null ? ModelData.EMPTY : modelData;
     }
@@ -100,7 +100,7 @@ public record BlockStateRenderingData(BlockState blockState,
             Log.getLogger().warn("Could not get model data for: " + blockState.toString(), e);
         }
         return model;
-    }
+    }*/
 
     /**
      * @return best guess using player pick and similar methods
@@ -118,7 +118,7 @@ public record BlockStateRenderingData(BlockState blockState,
     {
         final ModelResourceLocation modelResLoc = BlockModelShaper.stateToModelLocation(blockState);
         final ModelBakery modelBakery =
-            Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getModelManager().getModelBakery();
+            ((ModelManagerExtension) Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getModelManager()).blockui$getModelBakery();
         final UnbakedModel model = modelBakery.getModel(modelResLoc);
         final BlockModel blockModel = model instanceof final BlockModel bm ? bm :
             (model instanceof final MultiVariant mv ?

@@ -17,7 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraftforge.client.ForgeRenderTypes;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
@@ -324,7 +323,7 @@ public abstract class AbstractTextElement extends Pane
         temp.mul(fbW / 2.0f, fbH / 2.0f, 0, 0);
 
         final float scale = temp.distanceSquared(FILTERING_THRESHOLD, fbH - FILTERING_THRESHOLD, 0, 0);
-        ForgeRenderTypes.enableTextTextureLinearFiltering = Math.abs(temp.x - fbH + temp.y) > FILTERING_THRESHOLD || scale < FILTERING_MAX_SCALE * FILTERING_MAX_SCALE;
+        //ForgeRenderTypes.enableTextTextureLinearFiltering = Math.abs(temp.x - fbH + temp.y) > FILTERING_THRESHOLD || scale < FILTERING_MAX_SCALE * FILTERING_MAX_SCALE;
 
         final MultiBufferSource.BufferSource drawBuffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
         int lineShift = 0;
@@ -369,7 +368,7 @@ public abstract class AbstractTextElement extends Pane
         }
         drawBuffer.endBatch();
 
-        ForgeRenderTypes.enableTextTextureLinearFiltering = false;
+        //ForgeRenderTypes.enableTextTextureLinearFiltering = false;
         RenderSystem.disableBlend();
 
         ms.popPose();

@@ -2,15 +2,17 @@ package com.ldtteam.blockui.controls;
 
 import com.ldtteam.blockui.BOGuiGraphics;
 import com.ldtteam.blockui.PaneParams;
+import com.ldtteam.blockui.fabric.ItemPropertiesHelper;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +66,7 @@ public class ItemIconWithProperties extends ItemIcon
                     final CompoundTag child = tag.getCompound(itemKey);
                     final var itemOverrides = NBT_GENERIC_KEY.equals(itemKey) ? genericPropertyOverrides :
                         itemPropertyOverrides.computeIfAbsent(NBT_CURRENT_ITEM.equals(itemKey) ? itemStack.getItem() :
-                            ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemKey)), i -> new HashMap<>());
+                            BuiltInRegistries.ITEM.get(new ResourceLocation(itemKey)), i -> new HashMap<>());
 
                     child.getAllKeys().forEach(key -> {
                         if (child.contains(key, Tag.TAG_ANY_NUMERIC))
@@ -125,7 +127,7 @@ public class ItemIconWithProperties extends ItemIcon
             genericPropertyOverrides.isEmpty() ? Collections.emptyMap() : new HashMap<>();
         genericPropertyOverrides.forEach((key, val) -> {
             oldGenericVals.put(key, ItemProperties.getProperty(item, key));
-            ItemProperties.registerGeneric(key, val);
+            ItemPropertiesHelper.registerGeneric(key, val);
         });
 
         // item
@@ -133,13 +135,13 @@ public class ItemIconWithProperties extends ItemIcon
             currentItemOverrides.isEmpty() ? Collections.emptyMap() : new HashMap<>();
         currentItemOverrides.forEach((key, val) -> {
             oldItemVals.put(key, ItemProperties.getProperty(item, key));
-            ItemProperties.register(item, key, val);
+            ItemPropertiesHelper.register(item, key, val);
         });
 
         super.drawSelf(target, mx, my);
 
-        oldItemVals.forEach((key, val) -> ItemProperties.register(item, key, val));
-        oldGenericVals.forEach((key, val) -> ItemProperties.registerGeneric(key, val));
+        oldItemVals.forEach((key, val) -> ItemPropertiesHelper.register(item, key, val));
+        oldGenericVals.forEach((key, val) -> ItemPropertiesHelper.registerGeneric(key, val));
     }
 
     @Override

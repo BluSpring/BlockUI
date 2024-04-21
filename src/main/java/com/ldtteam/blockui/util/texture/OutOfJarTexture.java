@@ -4,6 +4,7 @@ import com.ldtteam.blockui.mod.BlockUI;
 import com.ldtteam.blockui.util.resloc.OutOfJarResourceLocation;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -14,7 +15,6 @@ import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -102,7 +102,7 @@ public class OutOfJarTexture extends AbstractTexture
 
         if (current == MissingTextureAtlasSprite.getTexture())
         {
-            if (!FMLEnvironment.production && !resLoc.getNamespace().equals(BlockUI.MOD_ID))
+            if (FabricLoader.getInstance().isDevelopmentEnvironment() && !resLoc.getNamespace().equals(BlockUI.MOD_ID))
             {
                 throw new IllegalArgumentException("Missing texture: " + resLoc);
             }

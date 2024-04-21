@@ -1,0 +1,26 @@
+accessWidener v2 named
+
+# gui close if player dead
+accessible field net/minecraft/world/entity/LivingEntity dead Z
+mutable field net/minecraft/world/entity/LivingEntity dead Z
+
+# style full ctor
+accessible method net/minecraft/network/chat/Style <init> (Lnet/minecraft/network/chat/TextColor;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnet/minecraft/network/chat/ClickEvent;Lnet/minecraft/network/chat/HoverEvent;Ljava/lang/String;Lnet/minecraft/resources/ResourceLocation;)V
+
+# gui graphics overload
+accessible method net/minecraft/client/gui/GuiGraphics <init> (Lnet/minecraft/client/Minecraft;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V # <init>
+accessible field net/minecraft/client/gui/GuiGraphics minecraft Lnet/minecraft/client/Minecraft;
+
+# sprite loading
+accessible method net/minecraft/server/packs/resources/FallbackResourceManager convertToMetadata (Lnet/minecraft/server/packs/resources/IoSupplier;)Lnet/minecraft/server/packs/resources/IoSupplier;
+extendable method net/minecraft/server/packs/resources/FallbackResourceManager convertToMetadata (Lnet/minecraft/server/packs/resources/IoSupplier;)Lnet/minecraft/server/packs/resources/IoSupplier;
+
+# cursor
+accessible field com/mojang/blaze3d/platform/NativeImage pixels J
+mutable field com/mojang/blaze3d/platform/NativeImage pixels J
+accessible field com/mojang/blaze3d/vertex/PoseStack poseStack Ljava/util/Deque;
+mutable field com/mojang/blaze3d/vertex/PoseStack poseStack Ljava/util/Deque;
+
+# blockstate rendering
+accessible field net/minecraft/client/resources/model/ModelBakery modelResources Ljava/util/Map;
+mutable field net/minecraft/client/resources/model/ModelBakery modelResources Ljava/util/Map;

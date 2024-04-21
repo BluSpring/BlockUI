@@ -1,7 +1,7 @@
 package com.ldtteam.blockui.util;
 
 import com.ldtteam.blockui.mod.Log;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 
 /**
@@ -16,7 +16,7 @@ public class SafeError
      */
     public static void throwInDev(final RuntimeException exception)
     {
-        if (FMLEnvironment.production)
+        if (!FabricLoader.getInstance().isDevelopmentEnvironment())
         {
             Log.getLogger().error(exception.getMessage(), exception);
         }
@@ -34,7 +34,7 @@ public class SafeError
      */
     public static void throwInDev(final RuntimeException exception, final Logger logger)
     {
-        if (FMLEnvironment.production)
+        if (!FabricLoader.getInstance().isDevelopmentEnvironment())
         {
             logger.error(exception.getMessage(), exception);
         }

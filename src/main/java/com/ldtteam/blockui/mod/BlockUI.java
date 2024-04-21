@@ -1,17 +1,14 @@
 package com.ldtteam.blockui.mod;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod;
+import net.fabricmc.api.ClientModInitializer;
 
-@Mod(BlockUI.MOD_ID)
-public class BlockUI
+public class BlockUI implements ClientModInitializer
 {
     public static final String MOD_ID = "blockui";
 
-    public BlockUI()
+    public void onInitializeClient()
     {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.MOD.bus().get().register(ClientLifecycleSubscriber.class));
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventSubscriber.class));
+        ClientLifecycleSubscriber.init();
+        ClientEventSubscriber.init();
     }
 }

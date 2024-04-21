@@ -1,0 +1,32 @@
+{
+    "schemaVersion": 1,
+    "id": "kilt",
+    "version": "${version}",
+    "name": "Kilt",
+    "description": "Allows the loading of Forge mods in the Fabric ecosystem. Very experimental.",
+    "authors": [
+        "BluSpring"
+    ],
+    "contact": {
+        "repo": "https://github.com/KiltMC/Kilt",
+        "issues": "https://github.com/KiltMC/Kilt/issues"
+    },
+    "license": "LGPL-2.1-only",
+    "icon": "assets/kilt/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "client": [
+            "com.ldtteam.blockui.mod.BlockUI"
+        ]
+    },
+    "mixins": [
+        "blockui.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=${loader_version}",
+        "fabric-api": ">=${fabric_version}",
+        "minecraft": "${minecraft_version}",
+        "architectury": ">=${architectury_version}"
+    },
+    "accessWidener": "blockui.accesswidener"
+}

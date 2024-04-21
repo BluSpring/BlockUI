@@ -5,7 +5,6 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexSorting;
-import org.joml.Matrix4f;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -13,7 +12,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.ForgeRenderTypes;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
@@ -34,6 +33,8 @@ public class BOScreen extends Screen
     protected int framebufferHeight;
     protected int absoluteMouseX;
     protected int absoluteMouseY;
+
+    private Screen parent;
 
     /**
      * Create a GuiScreen from a BlockOut window.
@@ -61,8 +62,8 @@ public class BOScreen extends Screen
         final int guiWidth = Math.max(framebufferWidth, 320);
         final int guiHeight = Math.max(framebufferHeight, 240);
 
-        final boolean oldFilteringValue = ForgeRenderTypes.enableTextTextureLinearFiltering;
-        ForgeRenderTypes.enableTextTextureLinearFiltering = false;
+        //final boolean oldFilteringValue = ForgeRenderTypes.enableTextTextureLinearFiltering;
+        //ForgeRenderTypes.enableTextTextureLinearFiltering = false;
 
         mcScale = ms.minecraft.getWindow().getGuiScale();
         renderScale = window.getRenderType().calcRenderScale(ms.minecraft.getWindow(), window);
@@ -134,7 +135,7 @@ public class BOScreen extends Screen
             RenderSystem.setProjectionMatrix(oldProjection, VertexSorting.ORTHOGRAPHIC_Z);
             RenderSystem.applyModelViewMatrix();
 
-            ForgeRenderTypes.enableTextTextureLinearFiltering = oldFilteringValue;
+            //ForgeRenderTypes.enableTextTextureLinearFiltering = oldFilteringValue;
         }
     }
 
@@ -381,5 +382,14 @@ public class BOScreen extends Screen
     public int getAbsoluteMouseY()
     {
         return absoluteMouseY;
+    }
+
+    @Override
+    public void onClose() {
+        this.minecraft.setScreen(parent);
+    }
+
+    public void setParent(Screen screen) {
+        this.parent = screen;
     }
 }

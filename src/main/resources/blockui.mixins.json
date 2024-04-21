@@ -1,0 +1,13 @@
+{
+    "required": true,
+    "package": "com.ldtteam.blockui.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "client": [
+        "ModelManagerMixin"
+    ],
+    "mixins": [
+        "ItemPropertiesAccessor",
+        "LiquidBlockAccessor"
+    ],
+    "minVersion": "0.8"
+}
