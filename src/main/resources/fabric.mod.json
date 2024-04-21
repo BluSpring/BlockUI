@@ -1,18 +1,18 @@
 {
     "schemaVersion": 1,
-    "id": "kilt",
+    "id": "blockui",
     "version": "${version}",
-    "name": "Kilt",
-    "description": "Allows the loading of Forge mods in the Fabric ecosystem. Very experimental.",
+    "name": "BlockUI",
+    "description": "UI Library mod, use ctrl+alt+shift+x to open a test-ui",
     "authors": [
+        "LDT Team",
         "BluSpring"
     ],
     "contact": {
-        "repo": "https://github.com/KiltMC/Kilt",
-        "issues": "https://github.com/KiltMC/Kilt/issues"
+        "repo": "https://github.com/BluSpring/BlockUI"
     },
-    "license": "LGPL-2.1-only",
-    "icon": "assets/kilt/icon.png",
+    "license": "GPL-3.0-only",
+    "icon": "icon.png",
     "environment": "*",
     "entrypoints": {
         "client": [
